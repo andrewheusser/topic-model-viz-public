@@ -10,8 +10,8 @@
 }
 
 .word {
-  transition: all 1s linear;
-  -webkit-transition: all 1s linear;
+  transition: all 1s linear !important;
+  -webkit-transition: all 1s linear !important;
   -moz-transition: all 1s ease;
   -o-transition: all 1s ease;
   -ms-transition: all 1s ease;

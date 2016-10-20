@@ -11,6 +11,11 @@ import { TopicModelDataService } from './topic-model-data.service';
 })
 
 export class TopicVizComponent implements OnInit {
+
+  public n: number = 0;
+  public numTopics: number = 5;
+  public numWords: number = 5;
+
   TopicsData: any;
   topics: any;
 
@@ -25,8 +30,6 @@ export class TopicVizComponent implements OnInit {
     this.topics=this.TopicsData[0]
     this.updateData()
   }
-
-  public n: number = 0;
 
   updateData: () => void
   = () => {
