@@ -1,0 +1,10 @@
+<div class="topicviz">
+  <div *ngFor="let topic of topics; let j = index;" [ngClass]="'row'">
+    <div *ngFor="let word of topic; let i = index;" [ngClass]="'topic'">
+      <svg height="50" width="200">
+      <rect x="0" y="0" width="200" height="50" [ngStyle]="{'fill': word.color, 'opacity': '.5'}"></rect>
+      <text x="100" y="25" text-anchor="middle" alignment-baseline="central" [ngStyle]="{'font-size': word.weight}" [ngClass]="'word'">{{word.text}}</text>
+    </svg>
+    </div>
+  </div>
+</div>
