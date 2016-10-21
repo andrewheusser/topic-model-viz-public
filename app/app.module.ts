@@ -7,9 +7,15 @@ import { YoutubeComponent }  from './youtube/youtube.component';
 
 import { OrderByPipe }  from './orderby.pipe';
 
+import { HttpModule } from '@angular/http';
+
+import { YoutubePlayerComponent, WindowRef, YoutubeService } from 'ng2-youtube/index';
+
 @NgModule({
-  imports: [ BrowserModule ],
-  declarations: [ AppComponent, TopicVizComponent, YoutubeComponent, OrderByPipe],
-  bootstrap: [ AppComponent, TopicVizComponent, YoutubeComponent ]
+  imports: [ BrowserModule, HttpModule ],
+  declarations: [ AppComponent, TopicVizComponent, YoutubeComponent, YoutubePlayerComponent, OrderByPipe ],
+  bootstrap: [ AppComponent, TopicVizComponent ],
+  providers: [WindowRef, YoutubeService ]
 })
+
 export class AppModule { }
