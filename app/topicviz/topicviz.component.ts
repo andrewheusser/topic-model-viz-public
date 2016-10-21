@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 
 import { TopicModelDataService } from './topic-model-data.service';
+import { OrderByPipe } from './orderby.pipe';
 
 @Component({
   moduleId: module.id,
   selector: 'topicviz',
   templateUrl: 'topicviz.component.html',
   styleUrls: ['topicviz.component.css'],
-  providers: [TopicModelDataService],
+  providers: [ TopicModelDataService ],
+
 })
 
 export class TopicVizComponent implements OnInit {
 
   public n: number = 0;
-  public numTopics: number = 5;
+  public numTopics: number = 3;
   public numWords: number = 5;
 
   TopicsData: any;
@@ -34,7 +36,7 @@ export class TopicVizComponent implements OnInit {
   updateData: () => void
   = () => {
     setTimeout(() => {
-      if (this.n > 3) { this.n = 0; }
+      if (this.n > 1) { this.n = 0; }
       this.topics = this.TopicsData[this.n];
       console.log("updating!")
       this.updateData();
@@ -42,5 +44,4 @@ export class TopicVizComponent implements OnInit {
     }, 1000);
 
   };
-
 }
