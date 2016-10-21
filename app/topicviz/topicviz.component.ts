@@ -16,15 +16,21 @@ declare var chroma: any;
 
 export class TopicVizComponent implements OnInit {
 
-  // declare public variables
+  // set this to change number of topics, number of words
   public numTopics: number = 10;
   public numWords: number = 5;
-  public topicColors: any;
-  public n: number = 0;
+
+  // this sets the color palette, see chroma.js docs for API
+  private colorPalette: any = 'Spectral';
+
+  // this sets the rate at which the data updates
+  private updateRate: number = 15;
+
+  // this sets the size of each word component
   public wordWidth: number = 200;
   public wordHeight: number = 50;
 
-  // declare private vars
+  // initialize private variable
   private TopicsData: any;
   private currentData: any;
   private uniqueIDs: any;
@@ -32,11 +38,12 @@ export class TopicVizComponent implements OnInit {
   private opacityParams: any;
   private fontMinMax: any;
   private opacityMinMax: any;
-  private colorPalette: any = 'Spectral';
 
-  private updateRate:number = 1;
+  // initialize a few other public variables
+  public topicColors: any;
+  public n: number = 0;
 
-
+  // inject the topic model data service
   constructor(private topicModelDataService: TopicModelDataService) { }
 
   //  init function
@@ -58,8 +65,8 @@ export class TopicVizComponent implements OnInit {
     this.fontMinMax = this.getFontMinMax(this.TopicsData)
 
     this.fontParams = {
-      wmin: this.wordHeight/10,
-      wmax: this.wordHeight*.9,
+      wmin: this.wordHeight / 10,
+      wmax: this.wordHeight * .9,
       xmin: this.fontMinMax[0],
       xmax: this.fontMinMax[1]
     }
@@ -84,7 +91,7 @@ export class TopicVizComponent implements OnInit {
       console.log("updating!")
       this.updateData();
       this.n = this.n + 1;
-    }, this.updateRate*1000);
+    }, this.updateRate * 1000);
   };
 
   // data retrieval function
@@ -92,9 +99,10 @@ export class TopicVizComponent implements OnInit {
     return this.topicModelDataService.getTopicModelData()
   }
 
-  // helper functions
 
-  getOpacityMinMax(data:any){
+  // helper functions //////////////////////////////////////////////////////////
+
+  getOpacityMinMax(data: any) {
     var arr: any = [];
     for (let timepoint of data) {
       for (let topic of timepoint) {
@@ -103,45 +111,42 @@ export class TopicVizComponent implements OnInit {
     }
     var min = Math.min.apply(null, arr);
     var max = Math.max.apply(null, arr);
-    return [min,max]
+    return [min, max]
   };
 
-  scaleOpacity(data:any){
+  scaleOpacity(data: any) {
     var params = this.opacityParams;
-    return (data - params.omin)/params.omax
-  }
+    return (data - params.omin) / params.omax
+  };
 
-normalizeWeights(data:any){
-  for (let timepoint of data) {
-    for (let topic of timepoint) {
-      var arr: any = [];
-      for (let word of topic.data) {
-        arr.push(word['weight']);
-      }
-      var min = Math.min.apply(null, arr);
-      for (let i in topic.data) {
-        arr[i] = arr[i] - min;
-      }
-      var max = Math.max.apply(null, arr);
-      for (let i in topic.data) {
-        arr[i] = arr[i]/max;
-      }
-      topic.data.forEach((word,i)=>{
-        word['weight'] = arr[i];
-      })
-      // for (let word of topic.data) {
-      //   word['weight'] = arr[i];
-      // }
-    }
-  }
-  return data
-};
-
-  getFontMinMax(data:any){
-    var arr:any = [];
+  normalizeWeights(data: any) {
     for (let timepoint of data) {
       for (let topic of timepoint) {
-        for (let word of topic.data){
+        var arr: any = [];
+        for (let word of topic.data) {
+          arr.push(word['weight']);
+        }
+        var min = Math.min.apply(null, arr);
+        for (let i in topic.data) {
+          arr[i] = arr[i] - min;
+        }
+        var max = Math.max.apply(null, arr);
+        for (let i in topic.data) {
+          arr[i] = arr[i] / max;
+        }
+        topic.data.forEach((word, i) => {
+          word['weight'] = arr[i];
+        })
+      }
+    }
+    return data
+  };
+
+  getFontMinMax(data: any) {
+    var arr: any = [];
+    for (let timepoint of data) {
+      for (let topic of timepoint) {
+        for (let word of topic.data) {
           arr.push(word['weight']);
         }
       }
@@ -149,21 +154,17 @@ normalizeWeights(data:any){
     return [Math.min.apply(null, arr), Math.max.apply(null, arr)]
   }
 
-  scaleFont(x:number){
+  scaleFont(x: number) {
     var params = this.fontParams;
     var y = (x - params.xmin) / params.xmax;
     return y * params.wmax + (1 - y) * params.wmin;
   }
 
-  // scaleOpacity(x:number,params:any){
-  //
-  // }
-
-  normalizeWords(words:any){
+  normalizeWords(words: any) {
     return words
   }
 
-  mapColors(data: any, color:string) {
+  mapColors(data: any, color: string) {
     var colors = chroma.scale(color).colors(data.length)
     var shuffledColors = this.shuffle(colors)
     var colorMap = {}
