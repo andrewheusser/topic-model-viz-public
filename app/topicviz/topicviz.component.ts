@@ -28,8 +28,8 @@ export class TopicVizComponent implements OnInit {
   private TopicsData: any;
   private currentData: any;
   private uniqueIDs: any;
-  private params: any;
-  private minmax: any;
+  private fontParams: any;
+  private fontMinMax: any;
   private colorPallete: any = 'Spectral';
 
 
@@ -51,14 +51,21 @@ export class TopicVizComponent implements OnInit {
     this.normalizeWeights(this.TopicsData)
 
     // compute font params
-    this.minmax = this.getMinMax(this.TopicsData)
+    this.fontMinMax = this.getFontMinMax(this.TopicsData)
 
-    this.params = {
+    this.fontParams = {
       wmin: this.wordHeight/10,
       wmax: this.wordHeight*.9,
-      xmin: this.minmax[0],
-      xmax: this.minmax[1]
+      xmin: this.fontMinMax[0],
+      xmax: this.fontMinMax[1]
     }
+
+    // this.opacityMinMax = this
+    //
+    // this.opacityParams = {
+    //   omin: this.opacityMin[0],
+    //   omax: this.opacityMax[1]
+    // }
 
     // assign
     this.currentData = this.TopicsData[0]
@@ -73,7 +80,7 @@ export class TopicVizComponent implements OnInit {
       console.log("updating!")
       this.updateData();
       this.n = this.n + 1;
-    }, 1000);
+    }, 15000);
   };
 
   // data retrieval function
@@ -83,6 +90,10 @@ export class TopicVizComponent implements OnInit {
 
   // helper functions
 
+  scaleOpacity(data:any){
+    return .75
+  }
+
 normalizeWeights(data:any){
   for (let timepoint of data) {
     for (let topic of timepoint) {
@@ -90,18 +101,26 @@ normalizeWeights(data:any){
       for (let word of topic.data) {
         arr.push(word['weight']);
       }
-      console.log('weights',arr)
       var min = Math.min.apply(null, arr);
-      var max = Math.max.apply(null, arr);
-      for (let word of topic.data) {
-        word['weight'] = word['weight']/ max;
+      for (let i in topic.data) {
+        arr[i] = arr[i] - min;
       }
+      var max = Math.max.apply(null, arr);
+      for (let i in topic.data) {
+        arr[i] = arr[i]/max;
+      }
+      topic.data.forEach((word,i)=>{
+        word['weight'] = arr[i];
+      })
+      // for (let word of topic.data) {
+      //   word['weight'] = arr[i];
+      // }
     }
   }
   return data
 };
 
-  getMinMax(data:any){
+  getFontMinMax(data:any){
     var arr:any = [];
     for (let timepoint of data) {
       for (let topic of timepoint) {
@@ -114,7 +133,7 @@ normalizeWeights(data:any){
   }
 
   scaleFont(x:number){
-    var params = this.params
+    var params = this.fontParams;
     var y = (x - params.xmin) / params.xmax;
     return y * params.wmax + (1 - y) * params.wmin;
   }
