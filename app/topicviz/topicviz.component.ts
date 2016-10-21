@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
 import { TopicModelDataService } from './topic-model-data.service';
-import { OrderByPipe } from './orderby.pipe';
 
 @Component({
   moduleId: module.id,
@@ -36,7 +35,7 @@ export class TopicVizComponent implements OnInit {
   updateData: () => void
   = () => {
     setTimeout(() => {
-      if (this.n > 1) { this.n = 0; }
+      if (this.n >= this.TopicsData.length) { this.n = 0; }
       this.topics = this.TopicsData[this.n];
       console.log("updating!")
       this.updateData();
