@@ -29,8 +29,12 @@ export class TopicVizComponent implements OnInit {
   private currentData: any;
   private uniqueIDs: any;
   private fontParams: any;
+  private opacityParams: any;
   private fontMinMax: any;
-  private colorPallete: any = 'Spectral';
+  private opacityMinMax: any;
+  private colorPalette: any = 'Spectral';
+
+  private updateRate:number = 1;
 
 
   constructor(private topicModelDataService: TopicModelDataService) { }
@@ -45,7 +49,7 @@ export class TopicVizComponent implements OnInit {
     this.uniqueIDs = this.getUniqueIds(this.TopicsData);
 
     // map the ids to colors
-    this.topicColors = this.mapColors(this.uniqueIDs, this.colorPallete);
+    this.topicColors = this.mapColors(this.uniqueIDs, this.colorPalette);
 
     // normalize weights within topic
     this.normalizeWeights(this.TopicsData)
@@ -60,12 +64,12 @@ export class TopicVizComponent implements OnInit {
       xmax: this.fontMinMax[1]
     }
 
-    // this.opacityMinMax = this
-    //
-    // this.opacityParams = {
-    //   omin: this.opacityMin[0],
-    //   omax: this.opacityMax[1]
-    // }
+    this.opacityMinMax = this.getOpacityMinMax(this.TopicsData)
+
+    this.opacityParams = {
+      omin: this.opacityMinMax[0],
+      omax: this.opacityMinMax[1]
+    }
 
     // assign
     this.currentData = this.TopicsData[0]
@@ -80,7 +84,7 @@ export class TopicVizComponent implements OnInit {
       console.log("updating!")
       this.updateData();
       this.n = this.n + 1;
-    }, 15000);
+    }, this.updateRate*1000);
   };
 
   // data retrieval function
@@ -90,8 +94,21 @@ export class TopicVizComponent implements OnInit {
 
   // helper functions
 
+  getOpacityMinMax(data:any){
+    var arr: any = [];
+    for (let timepoint of data) {
+      for (let topic of timepoint) {
+        arr.push(topic['weight'])
+      }
+    }
+    var min = Math.min.apply(null, arr);
+    var max = Math.max.apply(null, arr);
+    return [min,max]
+  };
+
   scaleOpacity(data:any){
-    return .75
+    var params = this.opacityParams;
+    return (data - params.omin)/params.omax
   }
 
 normalizeWeights(data:any){
