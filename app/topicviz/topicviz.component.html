@@ -1,9 +1,9 @@
 <div class="topicviz">
-  <div *ngFor="let topic of topics | orderby: 'weight'| slice:0:numTopics; let j = index;" [ngClass]="'row'">
+  <div *ngFor="let topic of currentData | orderby: 'weight'| slice:0:numTopics; let j = index;" [ngClass]="'row'">
     <div *ngFor="let word of topic.data | slice:0:numWords; let i = index;" [ngClass]="'topic'">
       <svg height="50" width="200">
       <rect x="0" y="0" width="200" height="50" [ngStyle]="{'fill': topicColors[topic.id], 'opacity': '.5'}"></rect>
-      <text x="100" y="25" text-anchor="middle" alignment-baseline="central" [ngStyle]="{'font-size': word.weight*10000000}" [ngClass]="'word'">{{word.text}}</text>
+      <text x="100" y="25" text-anchor="middle" alignment-baseline="central" [ngStyle]="{'font-size': word.weight*5000000}" [ngClass]="'word'">{{word.text}}</text>
     </svg>
     </div>
     <!-- <svg height="50" width="500">

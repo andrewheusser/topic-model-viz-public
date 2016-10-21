@@ -24,17 +24,26 @@ export class TopicVizComponent implements OnInit {
 
   // declare private vars
   private TopicsData: any;
-  private topics: any;
+  private currentData: any;
   private uniqueIDs: any;
+  private colorPallete: any = 'Spectral';
 
   constructor(private topicModelDataService: TopicModelDataService) { }
 
   //  init function
   ngOnInit() {
+
+    // get all the data
     this.TopicsData = this.getTopicModelData();
+
+    // get unique ids for each topic
     this.uniqueIDs = this.getUniqueIds(this.TopicsData);
-    this.topicColors = this.mapColors(this.uniqueIDs);
-    this.topics = this.TopicsData[0]
+
+    // map the ids to colors
+    this.topicColors = this.mapColors(this.uniqueIDs, this.colorPallete);
+
+    // assign
+    this.currentData = this.TopicsData[0]
     this.updateData()
   }
 
@@ -42,11 +51,11 @@ export class TopicVizComponent implements OnInit {
   updateData() {
     setTimeout(() => {
       if (this.n >= this.TopicsData.length) { this.n = 0; }
-      this.topics = this.TopicsData[this.n];
+      this.currentData = this.TopicsData[this.n];
       console.log("updating!")
       this.updateData();
       this.n = this.n + 1;
-    }, 2000);
+    }, 15000);
   };
 
   // data retrieval function
@@ -56,8 +65,17 @@ export class TopicVizComponent implements OnInit {
 
   // helper functions
 
-  mapColors(data: any) {
-    var colors = chroma.scale('Spectral').colors(data.length)
+  scaleFont(x:number,params:any){
+    var y = (x - params.xmin) / params.xmax;
+    return y * params.wmax + (1 - y) * params.wmin;
+  }
+
+  // scaleOpacity(x:number,params:any){
+  //
+  // }
+
+  mapColors(data: any, color:string) {
+    var colors = chroma.scale(color).colors(data.length)
     var shuffledColors = this.shuffle(colors)
     var colorMap = {}
     data.forEach((item: any, idx: any) => {
