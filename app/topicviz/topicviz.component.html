@@ -1,13 +1,13 @@
-<div class="topicviz">
+<div class="topicviz center-div">
   <div *ngFor="let topic of currentData | orderby: 'weight'| slice:0:numTopics; let j = index;" [ngClass]="'row'">
     <div *ngFor="let word of topic.data | slice:0:numWords; let i = index;" [ngClass]="'topic'">
-      <svg height="50" width="200">
-      <rect x="0" y="0" width="200" height="50" [ngStyle]="{'fill': topicColors[topic.id], 'opacity': '.5'}"></rect>
-      <text x="100" y="25" text-anchor="middle" alignment-baseline="central" [ngStyle]="{'font-size': word.weight*1000}" [ngClass]="'word'">{{word.text}}</text>
+      <svg [ngStyle]="{width: wordWidth, height: wordHeight}">
+      <rect x="0" y="0" [ngStyle]="{'fill': topicColors[topic.id], 'opacity': '.5', width: wordWidth, height: wordHeight}"></rect>
+      <text x="100" y="25" text-anchor="middle" alignment-baseline="central" [ngStyle]="{'font-size': scaleFont(word.weight)}" [ngClass]="'word'">{{word.text}}</text>
     </svg>
     </div>
-    <!-- <svg height="50" width="500">
-    <rect x="0" y="0" height="50" [ngStyle]="{'fill': topic.color, 'opacity': '.5', 'width': '100'}"></rect>
-    </svg> -->
+    <svg [ngStyle]="{width: wordHeight+10, height: wordHeight}" padding-left="10">
+    <rect x="10" y="0" [ngStyle]="{'fill': topicColors[topic.id], width: wordHeight, height: wordHeight}"></rect>
+    </svg>
   </div>
 </div>

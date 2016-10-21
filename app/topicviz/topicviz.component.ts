@@ -21,12 +21,17 @@ export class TopicVizComponent implements OnInit {
   public numWords: number = 5;
   public topicColors: any;
   public n: number = 0;
+  public wordWidth: number = 200;
+  public wordHeight: number = 50;
 
   // declare private vars
   private TopicsData: any;
   private currentData: any;
   private uniqueIDs: any;
+  private params: any;
+  private minmax: any;
   private colorPallete: any = 'Spectral';
+
 
   constructor(private topicModelDataService: TopicModelDataService) { }
 
@@ -42,6 +47,19 @@ export class TopicVizComponent implements OnInit {
     // map the ids to colors
     this.topicColors = this.mapColors(this.uniqueIDs, this.colorPallete);
 
+    // normalize weights within topic
+    this.normalizeWeights(this.TopicsData)
+
+    // compute font params
+    this.minmax = this.getMinMax(this.TopicsData)
+
+    this.params = {
+      wmin: this.wordHeight/10,
+      wmax: this.wordHeight*.9,
+      xmin: this.minmax[0],
+      xmax: this.minmax[1]
+    }
+
     // assign
     this.currentData = this.TopicsData[0]
     this.updateData()
@@ -55,7 +73,7 @@ export class TopicVizComponent implements OnInit {
       console.log("updating!")
       this.updateData();
       this.n = this.n + 1;
-    }, 15000);
+    }, 1000);
   };
 
   // data retrieval function
@@ -65,7 +83,38 @@ export class TopicVizComponent implements OnInit {
 
   // helper functions
 
-  scaleFont(x:number,params:any){
+normalizeWeights(data:any){
+  for (let timepoint of data) {
+    for (let topic of timepoint) {
+      var arr: any = [];
+      for (let word of topic.data) {
+        arr.push(word['weight']);
+      }
+      console.log('weights',arr)
+      var min = Math.min.apply(null, arr);
+      var max = Math.max.apply(null, arr);
+      for (let word of topic.data) {
+        word['weight'] = word['weight']/ max;
+      }
+    }
+  }
+  return data
+};
+
+  getMinMax(data:any){
+    var arr:any = [];
+    for (let timepoint of data) {
+      for (let topic of timepoint) {
+        for (let word of topic.data){
+          arr.push(word['weight']);
+        }
+      }
+    }
+    return [Math.min.apply(null, arr), Math.max.apply(null, arr)]
+  }
+
+  scaleFont(x:number){
+    var params = this.params
     var y = (x - params.xmin) / params.xmax;
     return y * params.wmax + (1 - y) * params.wmin;
   }
@@ -73,6 +122,10 @@ export class TopicVizComponent implements OnInit {
   // scaleOpacity(x:number,params:any){
   //
   // }
+
+  normalizeWords(words:any){
+    return words
+  }
 
   mapColors(data: any, color:string) {
     var colors = chroma.scale(color).colors(data.length)
