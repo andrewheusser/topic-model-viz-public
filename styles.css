@@ -146,3 +146,11 @@ nav a.router-link-active {
      margin: 0 auto;
      width: 1100px;
 }
+
+.smooth {
+  transition: all 1s linear !important;
+  -webkit-transition: all 1s linear !important;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+}

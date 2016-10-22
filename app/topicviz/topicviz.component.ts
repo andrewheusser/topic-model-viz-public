@@ -11,7 +11,6 @@ declare var chroma: any;
   templateUrl: 'topicviz.component.html',
   styleUrls: ['topicviz.component.css'],
   providers: [TopicModelDataService],
-
 })
 
 export class TopicVizComponent implements OnInit {
@@ -65,8 +64,8 @@ export class TopicVizComponent implements OnInit {
     this.fontMinMax = this.getFontMinMax(this.TopicsData)
 
     this.fontParams = {
-      wmin: this.wordHeight / 10,
-      wmax: this.wordHeight * .9,
+      wmin: this.wordHeight * .1,
+      wmax: this.wordHeight * .8,
       xmin: this.fontMinMax[0],
       xmax: this.fontMinMax[1]
     }
@@ -78,7 +77,7 @@ export class TopicVizComponent implements OnInit {
       omax: this.opacityMinMax[1]
     }
 
-    // assign
+    // assign current data and start transition immediately
     this.currentData = this.TopicsData[0]
     this.updateData()
   }
@@ -89,8 +88,8 @@ export class TopicVizComponent implements OnInit {
       if (this.n >= this.TopicsData.length) { this.n = 0; }
       this.currentData = this.TopicsData[this.n];
       console.log("updating!")
-      this.updateData();
       this.n = this.n + 1;
+      this.updateData();
     }, this.updateRate * 1000);
   };
 
@@ -134,7 +133,7 @@ export class TopicVizComponent implements OnInit {
         for (let i in topic.data) {
           arr[i] = arr[i] / max;
         }
-        topic.data.forEach((word, i) => {
+        topic.data.forEach((word:any, i:number) => {
           word['weight'] = arr[i];
         })
       }
@@ -166,10 +165,10 @@ export class TopicVizComponent implements OnInit {
 
   mapColors(data: any, color: string) {
     var colors = chroma.scale(color).colors(data.length)
-    var shuffledColors = this.shuffle(colors)
+    // var shuffledColors = this.shuffle(colors)
     var colorMap = {}
     data.forEach((item: any, idx: any) => {
-      colorMap[item] = shuffledColors[idx]
+      colorMap[item] = colors[idx]
     })
     return colorMap
   };

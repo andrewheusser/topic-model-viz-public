@@ -9,7 +9,7 @@
     text-align: center;
 }
 
-.word {
+.topicviz {
   transition: all 1s linear !important;
   -webkit-transition: all 1s linear !important;
   -moz-transition: all 1s ease;
